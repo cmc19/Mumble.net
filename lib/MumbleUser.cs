@@ -13,6 +13,7 @@ namespace Protocol.Mumble
         public bool DeafSelf { get; private set; }
         public bool Mute { get; private set; }
         public bool MuteSelf { get; private set; }
+        public string Hash { get; private set; }
 
         public MumbleUser(MumbleClient client, UserState message)
         {
@@ -40,6 +41,9 @@ namespace Protocol.Mumble
             if (message.self_deafSpecified) { DeafSelf = message.self_deaf; }
             if (message.muteSpecified) { Mute = message.mute; }
             if (message.self_muteSpecified) { MuteSelf = message.self_mute; }
+            Hash = message.hash; 
+            if (message.hashSpecified) { Hash = message.hash; }
+            
         }
 
         public void Update(UserRemove message)

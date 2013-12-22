@@ -147,6 +147,7 @@ namespace Protocol.Mumble
             if (client.Users.TryGetValue(session, out user))
             {
                 user.Update(this);
+                client.UserDisconnected(user);
             }
 
 

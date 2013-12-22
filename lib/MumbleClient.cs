@@ -52,6 +52,7 @@ namespace Protocol.Mumble
         public event EventHandler<MumbleMessageRecivedEventArgs> OnMessageRecived;
         public event EventHandler<MumbleUserStatusEventArgs> OnUserStatusEvent;
         public event EventHandler<MumbleUserStatusEventArgs> OnUserConnected;
+        public event EventHandler<MumbleUserStatusEventArgs> OnUserDisconnected;
 
 
         #endregion
@@ -119,6 +120,11 @@ namespace Protocol.Mumble
             SendTextMessage(message, null, null, Enumerable.Repeat(user, 1));
         }
 
+        public void SendMessageToRoot(string message)
+        {
+            this.SendTextMessageToChannel(message, this.RootChannel, false);
+        }
+
         public void SendTextMessageToChannel(string message, MumbleChannel channel, bool recursive)
         {
             if (recursive)
@@ -156,6 +162,14 @@ namespace Protocol.Mumble
         internal void UserConnected(MumbleUser user)
         {
             EventHandler<MumbleUserStatusEventArgs> eh = OnUserConnected;
+            if (eh != null)
+            {
+                eh(this, new MumbleUserStatusEventArgs(user));
+            }
+        }
+        internal void UserDisconnected(MumbleUser user)
+        {
+            EventHandler<MumbleUserStatusEventArgs> eh = OnUserDisconnected;
             if (eh != null)
             {
                 eh(this, new MumbleUserStatusEventArgs(user));
