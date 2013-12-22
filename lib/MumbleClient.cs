@@ -7,30 +7,29 @@ namespace Protocol.Mumble
 {
     public class MumbleClient : MumbleConnection
     {
+        
+
+        #region Channels
+
         private readonly Dictionary<UInt32, MumbleChannel> channels = new Dictionary<UInt32, MumbleChannel>();
 
-        public Dictionary<UInt32, MumbleChannel> Channels
-        {
-            get
-            {
-                return channels;
-            }
-        }
+        public Dictionary<UInt32, MumbleChannel> Channels { get { return channels; } }
 
         public MumbleChannel RootChannel { get; internal set; }
 
+        #endregion
+
+        #region Users
+
         private Dictionary<UInt32, MumbleUser> users = new Dictionary<UInt32, MumbleUser>();
 
-        public Dictionary<UInt32, MumbleUser> Users
-        {
-            get
-            {
-                return users;
-            }
-        }
+        public Dictionary<UInt32, MumbleUser> Users { get { return users; } }
 
         public MumbleUser ClientUser { get; private set; }
 
+        #endregion
+
+        #region Server Info
         public string Version { get; private set; }
 
         public uint serverVersion;
@@ -41,15 +40,32 @@ namespace Protocol.Mumble
         public string WelcomeText { get; private set; }
         public uint MaxBandwith { get; private set; }
 
+        #endregion
+
+        #region Low Level events
         public event EventHandler<MumblePacketEventArgs> OnConnected;
         public event EventHandler<MumblePacketEventArgs> OnTextMessage;
+        #endregion
+
+        #region Events
+
+        public event EventHandler<MumbleMessageRecivedEventArgs> OnMessageRecived;
+        public event EventHandler<MumbleUserStatusEventArgs> OnUserStatusEvent;
+        public event EventHandler<MumbleUserStatusEventArgs> OnUserConnected;
 
 
-        public MumbleClient(string version, string host, string username, int port = 64738) :
+        #endregion
+
+
+        public MumbleClient(string version, string host, string username, string password = "", int port = 64738) :
             base(host, username, port)
         {
             Version = version;
             OnPacketReceived += ProtocolHandler;
+            if (password != "")
+            {
+                base.password = password;
+            }
         }
 
         public new void Connect()
@@ -87,6 +103,15 @@ namespace Protocol.Mumble
         public void Update(TextMessage message)
         {
             DispatchEvent(this, OnTextMessage, new MumblePacketEventArgs(message));
+
+            DispatchEvent(this, OnMessageRecived, new MumbleMessageRecivedEventArgs(message.message, message.actor, this));
+
+        }
+
+        public void Update(UserState message)
+        {
+            if (message.actorSpecified)
+                DispatchEvent(this, OnUserStatusEvent, new MumbleUserStatusEventArgs(message.actor, this));
         }
 
         public void SendTextMessageToUser(string message, MumbleUser user)
@@ -126,6 +151,46 @@ namespace Protocol.Mumble
         internal UInt64 NextSequence()
         {
             return sequence += 2;
+        }
+
+        internal void UserConnected(MumbleUser user)
+        {
+            EventHandler<MumbleUserStatusEventArgs> eh = OnUserConnected;
+            if (eh != null)
+            {
+                eh(this, new MumbleUserStatusEventArgs(user));
+            }
+        }
+
+    }
+    public class MumbleMessageRecivedEventArgs : EventArgs
+    {
+        public MumbleUser User { get; private set; }
+        public string Message { get; private set; }
+
+        public string UserName { get { return User.Name; } }
+
+        public MumbleMessageRecivedEventArgs(string message, uint actor, MumbleClient mc)
+        {
+            Message = message;
+            User = mc.Users[actor];
+        }
+        public override string ToString()
+        {
+            return UserName + " : " + Message;
+        }
+    }
+
+    public class MumbleUserStatusEventArgs : EventArgs
+    {
+        public MumbleUser User { get; private set; }
+        public MumbleUserStatusEventArgs(uint userid, MumbleClient mc)
+        {
+            User = mc.Users[userid];
+        }
+        public MumbleUserStatusEventArgs(MumbleUser usr)
+        {
+            User = usr;
         }
 
     }

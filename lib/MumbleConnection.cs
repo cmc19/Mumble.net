@@ -25,6 +25,7 @@ namespace Protocol.Mumble
 
         private Thread listenThread;
         private Thread pingerThread;
+        internal string password;
 
         #region Public events
 
@@ -117,6 +118,11 @@ namespace Protocol.Mumble
 
             message.username = username;
             message.celt_versions.Add(-2147483637);
+
+            if (password!=null)
+            {
+                message.password = password;
+            }
 
             MumbleWrite(message);
         }

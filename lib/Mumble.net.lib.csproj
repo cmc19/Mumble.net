@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Protocol.Mumble</RootNamespace>
-    <AssemblyName>Mumble.net.lib</AssemblyName>
+    <AssemblyName>mumble</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

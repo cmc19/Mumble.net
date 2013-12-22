@@ -161,8 +161,11 @@ namespace Protocol.Mumble
             if (!client.Users.TryGetValue(session, out user))
             {
                 user = new MumbleUser(client, this);
+                client.UserConnected(user);
+
             }
             user.Update(this);
+            client.Update(this);
         }
     }
 
@@ -266,7 +269,7 @@ namespace Protocol.Mumble
     {
         public void HandleMessage(MumbleClient client)
         {
-
+            
         }
     }
 

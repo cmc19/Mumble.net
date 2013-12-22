@@ -5,44 +5,54 @@ namespace Mumble.net.app
 {
     class Program
     {
-        static MumbleClient client = new MumbleClient("Mumble.net", "localhost", "web");
+        static MumbleClient client = new MumbleClient("Mumble.net", "localhost", "web","password");
         static void Main(string[] args)
         {
 
             client.Connect();
             client.OnConnected += client_OnConnected;
-            client.OnTextMessage += client_OnTextMessage;
-            client.OnPacketReceived += client_OnPacketReceived;
+            client.OnMessageRecived += client_OnMessageRecived;
+            client.OnUserStatusEvent += client_OnUserStatusEvent;
+            client.OnUserConnected += client_OnUserConnected;
 
             while (true)
             {
-                var command = Console.ReadLine();
-                if (command == "exit")
+                var c = Console.ReadLine();
+                if (c == "exit")
                     break;
-                if (command[0] == 'm' && command[1] == ' ')
+                if (c.Length > 1)
                 {
-                    client.SendTextMessageToChannel(command.TrimStart('m', ' '), client.RootChannel, false);
-                    client.SendTextMessage(command.TrimStart('m', ' '), client.Channels.Values, client.Channels.Values, client.Users.Values);
+                    if (c[0] == 'm' && c[1] == ' ')
+                    {
+                        client.SendTextMessageToChannel(c.TrimStart('m', ' '), client.RootChannel, false);
+                        //client.SendTextMessage(c.TrimStart('m', ' '), client.Channels.Values, client.Channels.Values, client.Users.Values);
+                    }
                 }
             }
             client.Disconnect();
 
         }
 
-        static void client_OnPacketReceived(object sender, MumblePacketEventArgs e)
+        static void client_OnUserConnected(object sender, MumbleUserStatusEventArgs e)
         {
-
+            msg("Connected : " + e.User.Name);
         }
+
+        static void client_OnUserStatusEvent(object sender, MumbleUserStatusEventArgs e)
+        {
+            msg("user status : " + e.User.Name);
+        }
+
+        static void client_OnMessageRecived(object sender, MumbleMessageRecivedEventArgs e)
+        {
+            msg(e.ToString());
+        }
+
         static void msg(string text)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(text);
             Console.ForegroundColor = ConsoleColor.White;
-        }
-        static void client_OnTextMessage(object sender, MumblePacketEventArgs e)
-        {
-
-
         }
 
         static void client_OnConnected(object sender, MumblePacketEventArgs e)
