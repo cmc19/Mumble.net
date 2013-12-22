@@ -167,6 +167,7 @@ namespace Protocol.Mumble
                 eh(this, new MumbleUserStatusEventArgs(user));
             }
         }
+
         internal void UserDisconnected(MumbleUser user)
         {
             EventHandler<MumbleUserStatusEventArgs> eh = OnUserDisconnected;

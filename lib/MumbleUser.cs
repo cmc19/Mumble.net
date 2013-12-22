@@ -20,7 +20,7 @@ namespace Protocol.Mumble
             this.client = client;
             Name = message.name;
             Session = message.session;
-
+            Hash = message.hash;
             client.Users.Add(Session, this);
 
             Channel = client.Channels[message.channel_id];
@@ -41,7 +41,7 @@ namespace Protocol.Mumble
             if (message.self_deafSpecified) { DeafSelf = message.self_deaf; }
             if (message.muteSpecified) { Mute = message.mute; }
             if (message.self_muteSpecified) { MuteSelf = message.self_mute; }
-            Hash = message.hash; 
+            //Hash = message.hash; 
             if (message.hashSpecified) { Hash = message.hash; }
             
         }
