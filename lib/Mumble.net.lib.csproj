@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="protobuf-net">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\protobuf-net\protobuf-net-VS9\protobuf-net.dll</HintPath>
+      <HintPath>C:\temp\Mumble.net-master\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

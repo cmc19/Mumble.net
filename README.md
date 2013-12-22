@@ -1,7 +1,12 @@
 Mumble.net
 ==========
 
-.NET Interface Library to the Mumble Client Protocol
+Forked from <https://github.com/FreeApophis/Mumble.net>
+Changes some terminoigy to fit better with other .NET librarys. 
 
-* Design based on the Ruby Client
+beter example app
+
+Changes some terminology to fit better with other .NET libraries.
+
 * Stateful Client
+
